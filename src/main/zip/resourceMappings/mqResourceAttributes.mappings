@@ -1,0 +1,809 @@
+{
+	"resource": {
+		"queue": {
+			"optionalParms": {
+				"commandScope": {
+                    "attrDataType": "string",
+                    "attrMapping": "CMDSCOPE"
+				},
+				"like": {
+                    "attrDataType": "string",
+                    "attrMapping": "LIKE"
+				},
+				"noReplace": {
+					"attrDataType": "flag",
+                    "attrMapping": "NOREPLACE"
+				},
+				"force": {
+                    "attrDataType": "flag",
+                    "attrMapping": "FORCE"
+				},
+				"keepAuthorityRecords": {
+                    "attrDataType": "keyword",
+					"attrMapping": "AUTHREC",
+					"attrValueMappings": {
+						"keepAuthorityRecords": "NO"
+					}
+				},
+				"purge": {
+                    "attrDataType": "flag",
+                    "attrMapping": "PURGE"
+				},
+				"queueSharingGroupDisposition": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "QSGDISP",
+                    "attrValueMappings": {
+                        "copy": "COPY",
+                        "group": "GROUP",
+                        "private": "PRIVATE",
+                        "qmgr": "QMGR",
+                        "shared": "SHARED"
+                    }
+				}
+			},
+			"alias": {
+				"targetName": {
+					"attrDataType": "string",
+                    "attrMapping": "TARGET"
+				},
+				"targetType": {
+                    "attrDataType": "keyword",
+					"attrMapping": "TARGTYPE",
+					"attrValueMappings": {
+						"queue": "QUEUE",
+						"topic": "TOPIC"
+					}
+				}
+			},
+			"applicationDefaults": {
+				"clusterBind": {
+                    "attrDataType": "keyword",
+					"attrMapping": "DEFBIND",
+					"attrValueMappings": {
+						"notFixed": "NOTFIXED",
+						"onOpen": "OPEN",
+						"onGroup": "GROUP"
+					}
+				},
+				"messagePropertyControl": {
+                    "attrDataType": "keyword",			
+					"attrMapping": "PROPCTL",
+					"attrValueMappings": {
+						"all": "ALL",
+						"compatible": "COMPAT",
+						"force": "FORCE",
+						"none": "NONE",
+						"version6Compatible": "V6COMPAT"
+					}
+				},
+				"messagePersistence": {
+                    "attrDataType": "keyword",
+					"attrMapping": "DEFPSIST",
+					"attrValueMappings": {
+						"nonPersistent": "NO",
+						"persistent": "YES"
+					}
+				},
+				"messagePriority": {
+                    "attrDataType": "int",
+					"attrMapping": "DEFPRTY"
+				},
+				"putResponse": {
+                    "attrDataType": "keyword",
+					"attrMapping": "DEFPRESP",
+					"attrValueMappings": {
+						"asynchronous": "ASYNC",
+						"synchronous": "SYNC"
+					}
+				},
+				"readAhead": {
+                    "attrDataType": "keyword",
+					"attrMapping": "DEFREADA",
+					"attrValueMappings": {
+						"disabled": "DISABLED",
+						"no": "NO",
+						"yes": "YES"
+					}
+				},
+				"sharedInput": {
+                    "attrDataType": "booleanFlag",
+					"attrValueMappings": {
+						"false": "NOSHARE",
+						"true": "SHARE"
+					}
+				}
+			},
+			"cluster": {
+				"transmissionQueueForChannelName": {
+                    "attrDataType": "string",
+					"attrMapping": "CLCHNAME"
+				},
+				"name": {
+                    "attrDataType": "string",
+                    "attrMapping": "CLUSTER"
+				},
+				"namelist": {
+                    "attrDataType": "string",
+                    "attrMapping": "CLUSNL"
+				},
+				"workloadPriority": {
+                    "attrDataType": "int",
+					"attrMapping": "CLWLPRTY"
+				},
+				"workloadQueueUse": {
+                    "attrDataType": "keyword",
+					"attrMapping": "CLWLUSEQ",
+					"attrValueMappings": {
+						"any": "ANY",
+						"asQmgr": "QMGR",
+						"local": "LOCAL"
+					}
+				},
+				"workloadRank": {
+                    "attrDataType": "int",
+					"attrMapping": "CLWLRANK"
+				}
+			},
+			"dataCollection": {
+				"accounting": {
+                    "attrDataType": "keyword",
+					"attrMapping": "ACCTQ",
+					"attrValueMappings": {
+						"asQmgr": "QMGR",
+						"off": "OFF",
+						"on": "ON"
+					}
+				},
+				"monitoring": {
+                    "attrDataType": "keyword",
+					"attrMapping": "MONQ",
+					"attrValueMappings": {
+						"asQmgr": "QMGR",
+						"high": "HIGH",
+						"low": "LOW",
+						"medium": "MEDIUM",
+						"off": "OFF"
+					}
+				},
+				"statistics": {
+                    "attrDataType": "keyword",
+					"attrMapping": "STATQ",
+					"attrValueMappings": {
+						"asQmgr": "QMGR",
+						"off": "OFF",
+						"on": "ON"
+					}
+				}
+			},
+			"events.depth": {
+				"highEnabled": {
+                    "attrDataType": "keyword",
+					"attrMapping": "QDPHIEV",
+					"attrValueMappings": {
+						"false": "DISABLED",
+						"true": "ENABLED"
+					}
+				},
+				"highPercentage": {
+                    "attrDataType": "int",
+					"attrMapping": "QDEPTHHI"
+				},
+				"lowEnabled": {
+                    "attrDataType": "keyword",
+					"attrMapping": "QDPLOEV",
+					"attrValueMappings": {
+						"false": "DISABLED",
+						"true": "ENABLED"
+					}
+				},
+				"lowPercentage": {
+                    "attrDataType": "int",
+					"attrMapping": "QDEPTHLO"
+				},
+				"fullEnabled": {
+                    "attrDataType": "keyword",
+					"attrMapping": "QDPMAXEV",
+					"attrValueMappings": {
+						"false": "DISABLED",
+						"true": "ENABLED"
+					}
+				}
+			},
+			"events.serviceInterval":{
+				"duration": {
+                    "attrDataType": "int",
+					"attrMapping": "QSVCINT"
+				},
+				"highEnabled": {
+                    "attrDataType": "keyword",
+					"attrMapping": "QSVCIEV",
+					"attrValueMappings": {
+						"false": "NONE",
+						"true": "HIGH"
+					}
+				},
+                "okEnabled": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "QSVCIEV",
+                    "attrValueMappings": {
+                        "false": "NONE",
+                        "true": "OK"
+                    }
+                }
+			},
+			"extended": {
+				"allowSharedInput": {
+                    "attrDataType": "keyword",
+					"attrMapping": "DEFSOPT",
+					"attrValueMappings": {
+						"false": "EXCL",
+						"true": "SHARED"
+					}
+				},
+				"backoutRequeueQueueName": {
+                    "attrDataType": "string",
+					"attrMapping": "BOQNAME"
+				},
+				"backoutThreshold": {
+                    "attrDataType": "int",
+					"attrMapping": "BOTHRESH"
+				},
+				"custom": {
+					"attrMapping": "CUSTOM",
+					"attrDataType": "string"
+				},
+				"hardenGetBackout": {
+                    "attrDataType": "booleanFlag",
+					"attrValueMappings": {
+						"false": "NOHARDENBO",
+						"true": "HARDENBO"
+					}
+				},
+				"supportDistributionLists": {
+				    "attrDataType": "keyword",
+				    "attrMapping": "DISTL",
+				    "attrValueMappings":{
+				        "false": "NO",
+				        "true": "YES"
+				    }
+				}
+			},
+			"general": {
+				"description": {
+                    "attrDataType": "string",
+					"attrMapping": "DESCR"
+				},
+				"inhibitGet": {
+                    "attrDataType": "keyword",
+					"attrMapping": "GET",
+					"attrValueMappings": {
+						"false": "DISABLED",
+						"true": "ENABLED"
+					}
+				},
+				"inhibitPut": {
+                    "attrDataType": "keyword",
+					"attrMapping": "PUT",
+					"attrValueMappings": {
+						"false": "DISABLED",
+						"true": "ENABLED"
+					}
+				},
+				"isTransmissionQueue": {
+                    "attrDataType": "keyword",
+					"attrMapping": "USAGE",
+					"attrValueMappings": {
+						"false": "NORMAL",
+						"true": "XMITQ"
+					}
+				}
+			},
+			"model": {
+				"type": {
+                    "attrDataType": "keyword",
+					"attrMapping": "DEFTYPE",
+					"attrValueMappings": {
+						"permanentDynamic": "PERMDYN",
+						"sharedDynamic": "SHRDDYN",
+						"temporaryDynamic": "TEMPDYN"
+					}
+				}
+			},
+			"queueSharingGroup": {
+				"disposition": {
+                    "attrDataType": "keyword",
+					"attrMapping": "QSGDISP",
+					"attrValueMappings": {
+						"copy": "COPY",
+						"group": "GROUP",
+						"private": "PRIVATE",
+						"qmgr": "QMGR",
+						"shared": "SHARED"
+					}
+				},
+				"structureName": {
+                    "attrDataType": "string",
+					"attrMapping": "CFSTRUCT"
+				}
+			},
+			"remote": {
+				"queueName": {
+                    "attrDataType": "string",
+					"attrMapping": "RNAME"
+				},
+				"qmgrName": {
+                    "attrDataType": "string",
+					"attrMapping": "RQMNAME"
+				},
+				"transmissionQueueName": {
+                    "attrDataType": "string",
+					"attrMapping": "XMITQ"
+				}
+			},
+			"storage": {
+				"indexType": {
+                    "attrDataType": "keyword",
+					"attrMapping": "INDXTYPE",
+					"attrValueMappings": {
+						"correlationId": "CORRELID",
+						"groupId": "GROUPID",
+						"messageId": "MSGID",
+						"messageToken": "MSGTOKEN",
+						"none": "NONE"
+					}
+				},
+				"maximumDepth": {
+                    "attrDataType": "int",
+					"attrMapping": "MAXDEPTH"
+				},
+				"maximumMessageLength": {
+                    "attrDataType": "int",
+					"attrMapping": "MAXMSGL"
+				},
+				"messageDeliverySequence": {
+                    "attrDataType": "keyword",
+					"attrMapping": "MSGDLVSQ",
+					"attrValueMappings": {
+						"fifo": "FIFO",
+						"priority": "PRIORITY"
+					}
+				},
+				"nonPersistentMessageClass": {
+                    "attrDataType": "keyword",
+					"attrMapping": "NPMCLASS",
+					"attrValueMappings": {
+						"normal": "NORMAL",
+						"high": "HIGH"
+					}
+				},
+				"storageClass": {
+                    "attrDataType": "string",
+					"attrMapping": "STGCLASS"
+				}
+			},
+			"trigger": {
+				"enabled": {
+                    "attrDataType": "booleanFlag",
+					"attrValueMappings": {
+						"false": "NOTRIGGER",
+                        "true": "TRIGGER"						
+					}
+				},
+				"data": {
+                    "attrDataType": "string",
+					"attrMapping": "TRIGDATA"
+				},
+				"depth": {
+                    "attrDataType": "int",
+					"attrMapping": "TRIGDPTH"
+				},
+				"initiationQueueName": {
+                    "attrDataType": "string",
+					"attrMapping": "INITQ"
+				},
+				"messagePriority": {
+                    "attrDataType": "int",
+					"attrMapping": "TRIGMPRI"
+				},
+				"processName": {
+                    "attrDataType": "string",
+					"attrMapping": "PROCESS"
+				},
+				"type": {
+                    "attrDataType": "keyword",
+					"attrMapping": "TRIGTYPE",
+					"attrValueMappings": {
+						"depth": "DEPTH",
+						"every": "EVERY",
+						"first": "FIRST",
+						"none": "NONE"
+					}
+				}
+			}
+		},
+		"channel": {
+            "optionalParms": {
+                "commandScope": {
+                    "attrDataType": "string",
+                    "attrMapping": "CMDSCOPE"
+                },
+                "like": {
+                    "attrDataType": "string",
+                    "attrMapping": "LIKE"
+                },
+                "noReplace": {
+                    "attrDataType": "flag",
+                    "attrMapping": "NOREPLACE"
+                },
+                "queueSharingGroupDisposition": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "QSGDISP",
+                    "attrValueMappings": {
+                        "copy": "COPY",
+                        "group": "GROUP",
+                        "qmgr": "QMGR"
+                    }
+                }
+            },
+            "amqp": {
+                "keepAliveInterval": {
+                    "attrDataType": "int",
+                    "attrMapping": "AMQPKA"
+                },
+                "port": {
+                    "attrDataType": "int",
+                    "attrMapping": "PORT"
+                },
+                "topicRoot": {
+                    "attrDataType": "string",
+                    "attrMapping": "TPROOT"
+                },
+                "useClientID": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "USECLTID",
+                    "attrValueMappings": {
+                        "false": "NO",
+                        "true": "YES"
+                    }
+                }
+            },
+            "batch": {
+                "dataLimit": {
+                    "attrDataType": "int",
+                    "attrMapping": "BATCHLIM"
+                },
+                "heartbeat": {
+                    "attrDataType": "int",
+                    "attrMapping": "BATCHHB"
+                },
+                "interval": {
+                    "attrDataType": "int",
+                    "attrMapping": "BATCHINT"
+                },
+                "size": {
+                    "attrDataType": "int",
+                    "attrMapping": "BATCHSZ"
+                }
+            },
+            "clientConnection": {
+                "affinity": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "AFFINITY",
+                    "attrValueMappings":{
+                        "false": "NONE",
+                        "true": "PREFERRED"
+                    }
+                },
+                "defaultReconnect": {
+                   "attrDataType": "keyword",
+                    "attrMapping": "DEFRECON",
+                    "attrValueMappings":{
+                        "disabled": "DISABLED",
+                        "no": "NO",
+                        "qmgr": "QMGR",
+                        "yes": "YES"
+                    }
+                },
+                "qmgrName": {
+                    "attrDataType": "string",
+                    "attrMapping": "QMNAME"
+                },
+                "weight": {
+                    "attrDataType": "int",
+                    "attrMapping": "CLNTWGHT"
+                }
+            },
+            "cluster": {
+                "name": {
+                    "attrDataType": "string",
+                    "attrMapping": "CLUSTER"
+                },
+                "namelist": {
+                    "attrDataType": "string",
+                    "attrMapping": "CLUSNL"
+                },
+                "workloadPriority": {
+                    "attrDataType": "int",
+                    "attrMapping": "CLWLPRTY"
+                },
+                "workloadWeight": {
+                    "attrDataType": "int",
+                    "attrMapping": "CLWLWGHT"
+                },
+                "networkPriority": {
+                    "attrDataType": "int",
+                    "attrMapping": "NETPRTY"
+                }
+            },
+            "compression": {
+                "header": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "COMPHDR",
+                    "attrValueMappings": {
+                        "none": "NONE",
+                        "system": "SYSTEM"
+                    }
+                },
+                "message": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "COMPMSG",
+                    "attrValueMappings": {
+                        "any": "ANY",
+                        "none": "NONE",
+                        "rle": "RLE",
+                        "zlibFast": "ZLIBFAST",
+                        "zlibHigh": "ZLIBHIGH"
+                    }
+                }
+            },
+            "dataCollection": {
+                "monitoring": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "MONQ",
+                    "attrValueMappings": {
+                        "asQmgr": "QMGR",
+                        "high": "HIGH",
+                        "low": "LOW",
+                        "medium": "MEDIUM",
+                        "off": "OFF"
+                    }
+                },
+                "statistics": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "STATQ",
+                    "attrValueMappings": {
+                        "asQmgr": "QMGR",
+                        "high": "HIGH",
+                        "low": "LOW",
+                        "medium": "MEDIUM",
+                        "off": "OFF"
+                    }
+                }
+            },
+            "exits": {
+                "message": {
+                    "attrDataType": "string",
+                    "attrMapping": "MSGEXIT"
+                },
+                "messageUserData": {
+                    "attrDataType": "string",
+                    "attrMapping": "MSGDATA"
+                },
+                "receive": {
+                    "attrDataType": "string",
+                    "attrMapping": "RCVEXIT"
+                },
+                "receiverUserData": {
+                    "attrDataType": "string",
+                    "attrMapping": "RCVDATA"
+                },
+                "security": {
+                    "attrDataType": "string",
+                    "attrMapping": "SECEXIT"
+                },
+                "securityUserData": {
+                    "attrDataType": "string",
+                    "attrMapping": "SECDATA"
+                },
+                "send": {
+                    "attrDataType": "string",
+                    "attrMapping": "SENDEXIT"
+                },
+                "sendUserData": {
+                    "attrDataType": "string",
+                    "attrMapping": "SENDDATA"
+                }
+            },
+            "extended": {
+                "senderDataConversion": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "CONVERT",
+                    "attrValueMappings":{
+                        "false": "NO",
+                        "true": "YES"
+                    }
+                },
+                "disconnectInterval": {
+                    "attrDataType": "int",
+                    "attrMapping": "DISCINT"
+                },
+                "maximumInstances": {
+                    "attrDataType": "int",
+                    "attrMapping": "MAXINST"
+                },
+                "maximumInstancesPerClient": {
+                    "attrDataType": "int",
+                    "attrMapping": "MAXINSTC"
+                },
+                "nonPersisentMessageSpeed": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "NPMSPEED",
+                    "attrValueMappings":{
+                        "fast": "FAST",
+                        "normal": "NORMAL"
+                    }
+                },
+                "messagePropertyControl": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "PROPCTL",
+                    "attrValueMappings":{
+                        "all": "ALL",
+                        "compatible": "COMPAT",
+                        "none": "NONE"
+                    }
+                },
+                "sequenceNumberWrap": {
+                    "attrDataType": "int",
+                    "attrMapping": "SEQWRAP"
+                },
+                "useDeadLetterQueue": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "USEDLQ",
+                    "attrValueMappings":{
+                        "false": "NO",
+                        "true": "YES"
+                    }
+                }
+            },
+            "general": {
+                "description": {
+                    "attrDataType": "string",
+                    "attrMapping": "DESCR"
+                },
+                "heartbeatInterval": {
+                    "attrDataType": "int",
+                    "attrMapping": "HBINT"
+                },
+                "keepAliveInterval": {
+                    "attrDataType": "int",
+                    "attrMapping": "KAINT"
+                },
+                "localAddress": {
+                    "attrDataType": "string",
+                    "attrMapping": "LOCALADDR"
+                },
+                "maximumMessageLength": {
+                    "attrDataType": "int",
+                    "attrMapping": "MAXMSGL"
+                },
+                "sharedConversations": {
+                    "attrDataType": "int",
+                    "attrMapping": "SHARECNV"
+                },
+                "transmissionQueueName": {
+                    "attrDataType": "string",
+                    "attrMapping": "XMITQ"
+                }
+            },
+            "mca": {
+                "type": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "MCATYPE",
+                    "attrValueMappings": {
+                        "process": "PROCESS",
+                        "thread": "THREAD"
+                    }
+                },
+                "userID": {
+                    "attrDataType": "string",
+                    "attrMapping": "MCAUSER"
+                }
+            },
+            "messageRetry": {
+                "count": {
+                    "attrDataType": "int",
+                    "attrMapping": "MRRTY"
+                },
+                "interval": {
+                    "attrDataType": "int",
+                    "attrMapping": "MRTMR"
+                },
+                "exit": {
+                    "attrDataType": "string",
+                    "attrMapping": "MREXIT"
+                },
+                "userData": {
+                    "attrDataType": "string",
+                    "attrMapping": "MRDATA"
+                }
+            },
+            "networkConnection": {
+                "connectionName": {
+                    "attrDataType": "string",
+                    "attrMapping": "CONNAME"
+                }
+            },
+            "queueSharingGroup": {
+                "disposition": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "QSGDISP",
+                    "attrValueMappings": {
+                        "copy": "COPY",
+                        "group": "GROUP",
+                        "private": "PRIVATE",
+                        "qmgr": "QMGR"
+                    }
+                },
+                "defaultChannelDisposition": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "DEFCDISP",
+                    "attrValueMappings": {
+                        "fixShared": "FIXSHARED",
+                        "private": "PRIVATE",
+                        "shared": "SHARED"
+                    }
+                }
+            },
+            "retry": {
+                "longCount": {
+                    "attrDataType": "int",
+                    "attrMapping": "LONGRTY"
+                },
+                "longInterval": {
+                    "attrDataType": "int",
+                    "attrMapping": "LONGTMR"
+                },
+                "shortCount": {
+                    "attrDataType": "int",
+                    "attrMapping": "SHORTRTY"
+                },
+                "shortInterval": {
+                    "attrDataType": "int",
+                    "attrMapping": "SHORTTMR"
+                }
+            },
+            "security": {
+                "certificateLabel": {
+                    "attrDataType": "string",
+                    "attrMapping": "CERTLABL"
+                },
+                "cipherSpecification": {
+                    "attrDataType": "string",
+                    "attrMapping": "SSLCIPH"
+                },
+                "clientAuthentication": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "SSLCAUTH",
+                    "attrValueMappings": {
+                        "optional": "OPTIONAL",
+                        "required": "REQUIRED"
+                    }
+                },
+                "peerName": {
+                    "attrDataType": "string",
+                    "attrMapping": "SSLPEER"
+                },
+                "putAuthority": {
+                    "attrDataType": "keyword",
+                    "attrMapping": "PUTAUT",
+                    "attrValueMappings": {
+                        "alternateOrMCA": "ALTMCA",
+                        "context": "CTX",
+                        "default": "DEF",
+                        "onlyMCA": "ONLYMCA"
+                    }
+                }
+            }
+		}
+	}
+}

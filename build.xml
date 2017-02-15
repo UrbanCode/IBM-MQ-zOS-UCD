@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+- Licensed Materials - Property of IBM Corp.
+- IBM UrbanCode Deploy
+- (c) Copyright IBM Corporation 2011, 2014. All Rights Reserved.
+-
+- U.S. Government Users Restricted Rights - Use, duplication or disclosure restricted by
+- GSA ADP Schedule Contract with IBM Corp.
+-->
+<project name="mqzos" default="all" basedir="."
+    xmlns:codestation="antlib:com.urbancode.codestation2.client">
+
+    <property environment="env"/>
+    <property file=".build.properties"/>
+
+    <defaultexcludes add="**/.ahs.*"/>
+    <defaultexcludes add="**/*.bom"/>
+
+    <!-- AHP settings -->
+    <property name="ahp.branch" value="air" />
+    <property name="ahp.project.name" value="${ant.project.name}" />
+
+    <!-- =================================================== -->
+    <!-- PROJECT STRUCTURE                                   -->
+    <!-- =================================================== -->
+
+    <property name="lib.dir"           location="lib" />
+
+    <!-- =================================================== -->
+    <!-- MACROS                                              -->
+    <!-- =================================================== -->
+
+    <macrodef name="emptyDir" description="Ensure that the target directory exists and is empty">
+        <attribute name="dir"/>
+        <attribute name="excludes" default=""/>
+        <sequential>
+            <mkdir dir="@{dir}"/>
+            <delete dir="@{dir}" includes="*/**" excludes="@{excludes}" includeemptydirs="true" defaultexcludes="false"/>
+        </sequential>
+    </macrodef>
+
+    <!-- =================================================== -->
+    <!-- TARGETS                                             -->
+    <!-- =================================================== -->
+
+    <target name="dist" depends="resolve" description="Create distribution">
+        <ant antfile="plugin-build.xml" target="dist" inheritall="true"/>
+    </target>
+
+    <target name="all" depends="resolve">
+      <ant antfile="plugin-build.xml" target="all" inheritall="true"/>
+    </target>
+
+    <target name="clean" description="Cleans build output">
+      <emptyDir dir="${lib.dir}" excludes="ext/**"/>
+      <ant antfile="plugin-build.xml" target="clean" inheritall="true"/>
+    </target>
+
+    <target name="resolve" unless="resolve.no" description="Resolve all dependencies">
+        <mkdir dir="${lib.dir}"/>
+        <codestation:resolve
+                buildLife="${env.AH_BUILD_LIFE_ID}"
+                xmlFile="dependencies.xml"/>
+    </target>
+
+    <target name="publish" unless="publish.no"
+            description="Build artifacts and publish them to codestation">
+        <codestation:publish project="${ahp.project.name}"
+                           workflow="${ahp.workflow.name}"
+                           publishall="true"/>
+    </target>
+
+    <!-- =================================================== -->
+    <!-- TEST TARGETS                                        -->
+    <!-- =================================================== -->
+
+    <target name="run-tests" depends="resolve" unless="tests.no">
+      <ant antfile="plugin-build.xml" target="run-tests" inheritall="true"/>
+    </target>
+
+    <target name="run-single-test" depends="resolve" unless="tests.no">
+      <ant antfile="plugin-build.xml" target="run-single-test" inheritall="true"/>
+    </target>
+
+</project>
