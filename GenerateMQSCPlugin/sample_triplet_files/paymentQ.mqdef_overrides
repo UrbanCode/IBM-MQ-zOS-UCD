@@ -1,0 +1,213 @@
+{
+	"resource": {
+		"queue": [{
+			"command": "DEFINE",
+			"name": "PL00.@ENVMQ@.FT5_IDL_TX.AO",
+			"type": "alias",
+			"deploymentTargets": [{
+				"targetEnvName": "T1",
+				"deploy": true,
+                "overrideName": {
+                    "name":"PL00.T1.FT5_IDL_TX.AO.OV"
+                },
+                "alias": {
+					"targetName": "PL00.@ENVMQ@.FT5_IDL_TX.RQ"
+				}
+			},
+			{
+				"targetEnvName": "T2",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "Test",
+				"deploy": false,
+                "overrideName": {
+                    "name":"PL00.Test.FT5_IDL_TX.AO.OV"
+                },
+				"alias": {
+					"targetName": "T500.@ENVMQ@.FT5_IDL_TX_DUMMY.LQ"
+				}
+			}]
+		},
+		{
+			"command": "DEFINE",
+			"name": "PL00.@ENVMQ@.FT5_IDL_TX.RQ",
+			"type": "remote",
+			"deploymentTargets": [{
+				"targetEnvName": "T2",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "Test",
+				"deploy": true,
+				"overrideName": {
+                    "name":"PL00.Test.FT5_IDL_TX.RQ.OV"
+                },
+				"optionalParms": {
+					"noReplace": "noReplace"
+				}
+			}]
+		},
+		{
+			"command": "DEFINE",
+			"name": "PL00.@ENVMQ@.FT5_IDL_TX_DUMMY.LQ",
+			"type": "local",
+			"deploymentTargets": [{
+				"targetEnvName": "O1",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "T1",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "PROD",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "T2",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "Test",
+				"deploy": true,
+				"storage": {
+					"maximumMessageLength": 64512
+				},
+				"extended": {
+					"allowSharedInput": false
+				}
+			}]
+		},
+		{
+		    "command": "DEFINE",
+            "name": "PAYMENTQ.ALIAS",
+            "type": "alias",
+            "deploymentTargets": [{
+                "targetEnvName": "Dev",
+                "deploy": true,
+                "overrideName": {
+                    "name": "DVQM.PAYMENTQ.ALIAS"
+                },
+                "alias": {
+                    "targetName": "DVQM.PAYMENTQ.BASE",
+                    "targetType": "queue"
+                }
+            },
+            {
+                "targetEnvName": "Test",
+                "deploy": true,
+                "overrideName": {
+                    "name": "TSQM.PAYMENTQ.ALIAS"
+                },
+                "alias": {
+                    "targetName": "TSQM.PAYMENTQ.BASE",
+                    "targetType": "queue"
+                }
+            },
+            {
+                "targetEnvName": "QA",
+                "deploy": true,
+                "overrideName": {
+                    "name": "QAQM.PAYMENTQ.ALIAS"
+                },
+                "alias": {
+                    "targetName": "QAQM.PAYMENTQ.BASE",
+                    "targetType": "queue"
+                }
+            },
+            {
+                "targetEnvName": "Prod",
+                "deploy": true,
+                "overrideName": {
+                    "name": "PRQM.PAYMENTQ.ALIAS"
+                },
+                "alias": {
+                    "targetName": "PRQM.PAYMENTQ.BASE",
+                    "targetType": "queue"
+                }
+            }]		
+		},
+		{
+		    "command": "DEFINE",
+            "name": "PAYMENTQ2.ALIAS",
+            "type": "alias",
+            "deploymentTargets": [{
+                "targetEnvName": "Dev",
+                "deploy": true,
+                "overrideName": {
+                    "name": "@DevEnv@.@DevQMgr@.PAYMENTQ2.ALIAS"
+                },
+                "alias": {
+                    "targetName": "@DevEnv@.@DevQMgr@.PAYMENTQ2.BASE",
+                    "targetType": "queue"
+                }
+            },
+            {
+                "targetEnvName": "Test",
+                "deploy": true,
+                "overrideName": {
+                    "name": "@TestEnv@.@TestQMgr@.PAYMENTQ2.ALIAS"
+                },
+                "alias": {
+                    "targetName": "@TestEnv@.@TestQMgr@.PAYMENTQ2.BASE",
+                    "targetType": "queue"
+                }
+            },
+            {
+                "targetEnvName": "QA",
+                "deploy": true,
+                "overrideName": {
+                    "name": "@QAEnv@.@QAQMgr@.PAYMENTQ2.ALIAS"
+                },
+                "alias": {
+                    "targetName": "@QAEnv@.@QAQMgr@.PAYMENTQ2.BASE",
+                    "targetType": "queue"
+                }
+            },
+            {
+                "targetEnvName": "Prod",
+                "deploy": true,
+                "overrideName": {
+                    "name": "@ProdEnv@.@ProdQMgr@.PAYMENTQ2.ALIAS"
+                },
+                "alias": {
+                    "targetName": "@ProdEnv@.@ProdQMgr@.PAYMENTQ2.BASE",
+                    "targetType": "queue"
+                }
+            }]		
+		}],
+		"channel": [{
+			"command": "DEFINE",
+			"name": "@LQMGR@.TO.@RQMGR@.001",
+			"type": "sender",
+			"deploymentTargets": [{
+				"targetEnvName": "T1",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "Test",
+				"deploy": true,
+				"networkConnection": {
+					"connectionName": "WINMVS4C.hursley.ibm.com(1415)"
+				}
+			}]
+		},
+		{
+			"command": "DEFINE",
+			"name": "TO.@LQMGR@.001",
+			"type": "serverConnection",
+			"deploymentTargets": [{
+				"targetEnvName": "T1",
+				"deploy": false
+			},
+			{
+				"targetEnvName": "Test",
+				"deploy": true,
+				"general": {
+					"description": "Test SRVCONN channel"
+				}
+			}]
+		}]
+	}
+}

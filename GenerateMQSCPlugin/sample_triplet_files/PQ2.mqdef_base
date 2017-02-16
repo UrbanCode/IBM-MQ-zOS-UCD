@@ -1,0 +1,28 @@
+{
+    "resource": {
+        "queue": [{
+            "command": "DEFINE",
+            "name": "PAYMENT.QUEUE",
+            "type": "local",
+            "general": {
+                "description": "Queue for bank payments"
+            },
+            "storage": {
+                "maximumDepth": 1000,
+                "maximumMessageLength": 32000
+            },
+            "extended": {
+                "allowSharedInput": true
+            },
+            "trigger": {
+                "enabled": false,
+                "type": "none"
+            }
+        }],
+        "channel": [{
+            "command": "DEFINE",
+            "name": "DRQM.TO.DLQM”,
+            "type": "receiver"
+        }]
+    }
+}
