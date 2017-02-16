@@ -1,2 +1,57 @@
 {
+    "resource": {
+        "queue": [{
+            "command": "DEFINE",
+            "name": "PAYMENT.QUEUE",
+            "type": "local",
+            "deploymentTargets": [{
+                "targetEnvName": "Dev",
+                "deploy": false,
+                "storage": {
+                    "maximumDepth": 10000,
+                    "maximumMessageLength": 16384
+                }
+            },
+            {
+                "targetEnvName": "Test",
+                "deploy": false,
+                "storage": {
+                    "maximumDepth": 20000,
+                    "maximumMessageLength": 32768
+                }
+            },
+            {
+                "targetEnvName": "QA",
+                "deploy": false,
+                "storage": {
+                    "maximumDepth": 30000,
+                    "maximumMessageLength": 65536
+                }
+            },
+            {
+                "targetEnvName": "PROD",
+                "deploy": true
+            }]
+        }],
+        "channel": [{
+            "command": "DEFINE",
+            "name": "DRQM.TO.DLQM",
+            "type": "receiver",
+            "deploymentTargets": [{
+                "targetEnvName": "Dev",
+                "deploy": true,
+                "extended": {
+                    "useDeadLetterQueue": true
+                }
+            },
+            {
+                "targetEnvName": "Test",
+                "deploy": false,
+                "general": {
+                    "descr": "Receiver Channel for Test Environment",
+                    "maximumMessageLength": "32768"
+                }
+            }]
+        }]
+    }
 }
