@@ -22,7 +22,7 @@ View the doc folder for additional white paper documentation and sample triplet 
 ### Installation
 	The packaged zip is located in the dist folder. No special steps are required for installation.
 	See Installing plug-ins in UrbanCode Deploy. Download this zip file if you wish to skip the
-	manual build step. Otherwise, download the entire Information-UCD and
+	manual build step. Otherwise, download the entire MQ-zOS-UCD and
 	run the "ant" command in the top level folder. This should compile the code and create
 	a new distributable zip within the dist folder. Use this command if you wish to make
 	your own changes to the plugin.
