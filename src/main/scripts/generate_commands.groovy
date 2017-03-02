@@ -8,11 +8,8 @@
  * </copyright>
  */
 
-import java.util.concurrent.ThreadPoolExecutor.Worker
-
 import com.urbancode.air.AirPluginTool
-
-import mqzos.mqscutil
+import com.urbancode.air.plugin.mqzos.mqscutil
 
 // generate_commands.groovy is the first method (groovy script) that is invoked when
 // the Generate MQSC Commands plugin step is run as part of an IBM UCD process. It:

@@ -1,4 +1,4 @@
-package mqzos
+package com.urbancode.air.plugin.mqzos
 
 /*
  * <copyright

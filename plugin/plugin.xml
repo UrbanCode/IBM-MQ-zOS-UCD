@@ -60,7 +60,7 @@
     The arg attribute can be "value", "path", or "file".  -->
    <command program="${GROOVY_HOME}/bin/groovy">
       <arg value="-cp"/>
-      <arg path="classes:lib"/>
+      <arg path="classes:lib/groovy-plugin-utils.jar"/>
       <arg file="generate_commands.groovy"/>
       <arg file="${PLUGIN_INPUT_PROPS}"/>
       <arg file="${PLUGIN_OUTPUT_PROPS}"/>
