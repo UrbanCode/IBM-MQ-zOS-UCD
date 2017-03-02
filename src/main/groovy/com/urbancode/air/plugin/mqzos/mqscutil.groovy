@@ -1,14 +1,11 @@
-package com.urbancode.air.plugin.mqzos
-
-/*
- * <copyright
- * notice="lm-source"
- * years="2016,2017">
- * Licensed Materials - Property of IBM
- *
- * (C) Copyright IBM Corp. 2016, 2017 All Rights Reserved.
- * </copyright>
+/**
+ * © Copyright IBM Corporation 2016, 2017.
+ * This is licensed under the following license.
+ * The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
+ * U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
  */
+
+package com.urbancode.air.plugin.mqzos
 
 import groovy.json.JsonSlurper
 
