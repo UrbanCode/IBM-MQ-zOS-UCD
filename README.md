@@ -1,4 +1,4 @@
-# IBM UrbanCode Deploy MQ z/OS - Generate MQSC Commands Plugin
+# IBM UrbanCode Deploy MQ z/OS - Generate MQSC Commands Plugin [![Build Status](https://travis-ci.org/IBM-UrbanCode/IBM-MQ-zOS-UCD.svg?branch=master)](https://travis-ci.org/IBM-UrbanCode/IBM-MQ-zOS-UCD)
 ---
 Note: This is not the plugin distributable! This is the source code. To find the installable plugin, go into the 'Releases' tab, and download a stable version.
 
