@@ -138,6 +138,12 @@
                 <fileset dir="${lib.build.classes.dir}">
                     <include name="**/*.class" />
                 </fileset>
+
+                <!-- groovy-plugin-utils -->
+                <fileset dir="${lib.build.gputil.sources.dir}">
+                    <include name="**/*.groovy" />
+                </fileset>
+
             </copy>
 
         </target>
@@ -165,7 +171,6 @@
             <mkdir dir="${lib.dir}"/>
             <mkdir dir="${lib.build.dir}"/>
             <mkdir dir="${lib.test.dir}"/>
-            <ivy:retrieve conf="urbancode" pattern="${lib.dir}/[artifact](-[classifier]).[ext]"/>
             <ivy:retrieve conf="default"   pattern="${lib.dir}/[artifact]-[revision](-[classifier]).[ext]"/>
             <ivy:retrieve conf="build" pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]"/>
             <ivy:retrieve conf="test"  pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]"/>

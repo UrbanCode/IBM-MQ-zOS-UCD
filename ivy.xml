@@ -7,15 +7,12 @@
 -->
     <info organisation="com.ibm.urbancode" module="dependencies"/>
     <configurations>
-        <conf name="urbancode" description="UrbanCode jars used during runtime"/>
-        <conf name="default" description="All other jars used during runtime"/>
+        <conf name="default" description="Jars used during runtime"/>
         <conf name="build" description="All jars used during build"/>
         <conf name="test" description="All jars used during testing"/>
     </configurations>
     <dependencies>
         <!-- Runtime Dependencies -->
-        <!-- http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ibm.urbancode.plugins%22 -->
-        <dependency org="com.ibm.urbancode.plugins" name="groovy-plugin-utils" rev="1.2" transitive="false" conf="urbancode->default"/>
 
         <!-- Build Dependencies -->
         <!-- http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.ibm.urbancode.plugins%22 -->
