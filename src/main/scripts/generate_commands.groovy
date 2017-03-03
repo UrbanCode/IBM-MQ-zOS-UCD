@@ -6,7 +6,7 @@
  */
 
 import com.urbancode.air.AirPluginTool
-import com.urbancode.air.plugin.mqzos.mqscutil
+import com.urbancode.air.plugin.mqzos.MQSCUtil
 
 // generate_commands.groovy is the first method (groovy script) that is invoked when
 // the Generate MQSC Commands plugin step is run as part of an IBM UCD process. It:
@@ -16,7 +16,7 @@ import com.urbancode.air.plugin.mqzos.mqscutil
 // - Creates the mqsc resource definitions property variable that contains the MQSC commands,
 // - Writes the user data (set to Component and Version names by default) to the mqsc resource definitions property variable.
 // - For all triplet of files in the work directory that meet the base file name filter criteria,
-//   It verifies that the files exit, creates an instance of class mqscutil and invokes method
+//   It verifies that the files exit, creates an instance of class MQSCUtil and invokes method
 //   GenerateMQSCFormDefintions to generate the MQSC form of MQ commands for the REST form of MQ
 //   Commands represented in the triplet of files, and to write them to the mqsc resource definitions property variable.
 // - Displays details of the number of base definition files (and hence triplets of files) processed.
@@ -218,8 +218,8 @@ try {
 					// resource definition error, or that residual files have not been cleaned up.
 					mqscResourceDefinitions += '\n*\n* ' + baseFileNameAndType + ', ' + overridesFileNameAndType + ', ' + propertiesFileNameAndType + '\n*\n'
 
-					// Call mqscutil to generate MQSC commands based on the 3 input files
-					mqscResourceDefinitions = new mqscutil().generateMQSCFormDefinitions(
+					// Call MQSCUtil to generate MQSC commands based on the 3 input files
+					mqscResourceDefinitions = new MQSCUtil().generateMQSCFormDefinitions(
 						baseFile,
 						new File(fullWorkDirPath, overridesFileNameAndType),
 						new File(fullWorkDirPath, propertiesFileNameAndType),

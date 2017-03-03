@@ -14,7 +14,7 @@ import groovy.json.JsonSlurper
  * overrides and properties file. An MQ resource attributes mappings file is used to facilitate
  * the conversion from the JSON file to the MQSC representation.
  */
-class mqscutil {
+class MQSCUtil {
 
 	// Trace flag.
 	def private trace
