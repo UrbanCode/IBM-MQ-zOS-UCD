@@ -2,6 +2,7 @@
 .*
 !.gitignore
 !.git*
+!.travis.yml
 
 # ignore all temporary files and ahp specific files
 *.bak
@@ -15,5 +16,3 @@
 /lib
 /ecbin
 /releases
-
-
