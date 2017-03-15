@@ -122,5 +122,8 @@
     <release-note plugin-version="1">
       Initial release of the plug-in.
     </release-note>
+  <release-note plugin-version="2">
+    Resolved MQSCUtil missing class expection.
+  </release-note>
   </release-notes>
 </pluginInfo>
