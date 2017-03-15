@@ -21,11 +21,11 @@ This plug-in is supported to run with IBM z/OS V2.1 (or later) and IBM MQ for z/
 This plug-in requires version 6.2.2 (or later) of IBM UrbanCode Deploy.
 
 ### Installation
-	The packaged zip is located in the dist folder. No special steps are required for installation.
+	The packaged zip is located in the 'Releases' tab. No special steps are required for installation.
 	See Installing plug-ins in UrbanCode Deploy. Download this zip file if you wish to skip the
 	manual build step. Otherwise, download the entire MQ-zOS-UCD and
 	run the "ant" command in the top level folder. This should compile the code and create
-	a new distributable zip within the dist folder. Use this command if you wish to make
+	a new distributable zip within the '/releases' folder. Use this command if you wish to make
 	your own changes to the plugin.
 
 ### History
