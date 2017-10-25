@@ -277,16 +277,16 @@
                     "attrDataType": "keyword",
 					"attrMapping": "GET",
 					"attrValueMappings": {
-						"false": "DISABLED",
-						"true": "ENABLED"
+						"false": "ENABLED",
+						"true": "DISABLED"
 					}
 				},
 				"inhibitPut": {
                     "attrDataType": "keyword",
 					"attrMapping": "PUT",
 					"attrValueMappings": {
-						"false": "DISABLED",
-						"true": "ENABLED"
+						"false": "ENABLED",
+						"true": "DISABLED"
 					}
 				},
 				"isTransmissionQueue": {
