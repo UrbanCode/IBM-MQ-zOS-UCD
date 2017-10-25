@@ -29,5 +29,10 @@ This plug-in requires version 6.2.2 (or later) of IBM UrbanCode Deploy.
 	your own changes to the plugin.
 
 ### History
+    Version 3
+        Updated mqResourceAttribute Mappings.
+        The true and false mapping values for inhibitGet and inhibitPut were previously coded in reverse.
+    Version 2
+      Resolved MQSCUtil missing class exception.
     Version 1
         Initial beta release

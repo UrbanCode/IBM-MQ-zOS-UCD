@@ -125,5 +125,9 @@
   <release-note plugin-version="2">
     Resolved MQSCUtil missing class exception.
   </release-note>
+  <release-note plugin-version="3">
+    Updated mqResourceAttribute Mappings.
+    The true and false mapping values for inhibitGet and inhibitPut were previously coded in reverse.
+  </release-note>
   </release-notes>
 </pluginInfo>
