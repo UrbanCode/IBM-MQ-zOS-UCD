@@ -23,12 +23,14 @@ This plug-in requires version 6.2.2 (or later) of IBM UrbanCode Deploy.
 ### Installation
 	The packaged zip is located in the 'Releases' tab. No special steps are required for installation.
 	See Installing plug-ins in UrbanCode Deploy. Download this zip file if you wish to skip the
-	manual build step. Otherwise, download the entire MQ-zOS-UCD and
-	run the "ant" command in the top level folder. This should compile the code and create
+	manual build step. Otherwise, download the entire IBM-MQ-zOS-UCD and
+	run the "gradle" command in the top level folder. This should compile the code and create
 	a new distributable zip within the '/releases' folder. Use this command if you wish to make
 	your own changes to the plugin.
 
 ### History
+    Version 4
+        Updated build tool from Ant to Gradle.
     Version 3
         Updated mqResourceAttribute Mappings.
         The true and false mapping values for inhibitGet and inhibitPut were previously coded in reverse.

@@ -101,7 +101,7 @@
   </meta-html>
 
   <!-- Do not change the release-version, the build process injects it. -->
-  <release-version>#RELEASE_VERSION#</release-version>
+  <release-version>@RELEASE_VERSION@</release-version>
 
   <release-notes>
     <!--
@@ -120,14 +120,17 @@
       releaseNotes/release1.html (where release1.html contains html formatted version information)
       -->
     <release-note plugin-version="1">
-      Initial release of the plug-in.
+        Initial release of the plug-in.
     </release-note>
-  <release-note plugin-version="2">
-    Resolved MQSCUtil missing class exception.
-  </release-note>
-  <release-note plugin-version="3">
-    Updated mqResourceAttribute Mappings.
-    The true and false mapping values for inhibitGet and inhibitPut were previously coded in reverse.
-  </release-note>
+    <release-note plugin-version="2">
+        Resolved MQSCUtil missing class exception.
+    </release-note>
+    <release-note plugin-version="3">
+        Updated mqResourceAttribute Mappings.
+        The true and false mapping values for inhibitGet and inhibitPut were previously coded in reverse.
+    </release-note>
+    <release-note plugin-version="4">
+        Updated build tool from Ant to Gradle.
+    </release-note>
   </release-notes>
 </pluginInfo>
