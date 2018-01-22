@@ -29,12 +29,24 @@ This plug-in requires version 6.2.2 (or later) of IBM UrbanCode Deploy.
 	your own changes to the plugin.
 
 ### History
-    Version 4
-        Updated build tool from Ant to Gradle.
-    Version 3
-        Updated mqResourceAttribute Mappings.
-        The true and false mapping values for inhibitGet and inhibitPut were previously coded in reverse.
-    Version 2
-      Resolved MQSCUtil missing class exception.
-    Version 1
-        Initial beta release
+Version 5
+- If there is no base file, an error is now raised. An information message is also now issued if there are no resources to deploy in the overrides file.
+- Single keyword (i.e. force/noForce, replace/noReplace, purge/noPurge) overrides are now supported. Other single keywords, like trigger/noTrigger, were previously already supported by the plugin.
+- Default (generic) overrides are now supported.
+- An error is now raised for non-existent attribute groups and attributes.
+- Setting the keepAliveInterval to -1 now correctly builds MQSC with KAINT(AUTO) or AMQPKA(AUTO) depending on the type of channel being defined.
+- The white paper has been updated to document default (generic) overrides.
+- Additional trace has also been added where required, and some comments in the code have been enhanced to aid future maintenance.
+
+Version 4
+- Updated build tool from Ant to Gradle.
+
+Version 3
+- Updated mqResourceAttribute Mappings.
+- The true and false mapping values for inhibitGet and inhibitPut were previously coded in reverse.
+
+Version 2
+- Resolved MQSCUtil missing class exception.
+
+Version 1
+- Initial beta release

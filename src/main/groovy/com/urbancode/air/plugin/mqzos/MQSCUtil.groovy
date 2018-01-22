@@ -1,5 +1,5 @@
 /**
- * © Copyright IBM Corporation 2016, 2017.
+ * © Copyright IBM Corporation 2016, 2018.
  * This is licensed under the following license.
  * The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
  * U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -62,47 +62,51 @@ class MQSCUtil {
 		// Parse the base JSON format file and store the data into a base map.
 		def baseMap = parseFile(baseFile)
 
-		// Parse the overrides file and build a map of name value pairs of the overriding attributes and values.
-		def overridesMaps = buildOverridesMap(overridesFile, targetEnvironmentName)
+		if (baseMap.size() == 0) {
+			println '** WARNING: Basefile ' + baseFile + ' is empty. Associated overrides and properties files, if defined, will not be processed **'
+		} else {
+			// Parse the overrides file and build a map of name value pairs of the overriding attributes and values.
+			def overridesMaps = buildOverridesMap(overridesFile, targetEnvironmentName)
 
-		// Merge the base and overrides attributes into a map of name value pairs.
-		def mergedMap = mergeBaseAndOverrides(baseMap, overridesMaps)
+			// Merge the base and overrides attributes into a map of name value pairs.
+			def mergedMap = mergeBaseAndOverrides(baseMap, overridesMaps)
 
-		// Check if any tokens in the mergedMap need to be replaced with their respective
-		// values defined in the properties file. If not, we can just skip the substitution
-		// and use the mergedMap as it stands.
-		if (mergedMap.toString().contains('@')) {
-			if (traceEnabled) {
-				println 'INFORMATION: Found tokens wrapped between \'@\' symbols'
+			// Check if any tokens in the mergedMap need to be replaced with their respective
+			// values defined in the properties file. If not, we can just skip the substitution
+			// and use the mergedMap as it stands.
+			if (mergedMap.toString().contains('@')) {
+				if (traceEnabled) {
+					println '** INFORMATION: Found tokens wrapped between \'@\' symbols **'
+				}
+
+				// Substitute any property values in the merged map.
+				mergedMap = substituteProperties(propertiesFile, mergedMap)
+			}
+			else {
+				if (traceEnabled) {
+					println '** INFORMATION: Did not find tokens wrapped between \'@\' symbols **'
+				}
 			}
 
-			// Substitute any property values in the merged map.
-			mergedMap = substituteProperties(propertiesFile, mergedMap)
-		}
-		else {
+			// Process any override name values.
+			mergedMap = processOverrideNames(mergedMap)
+
+			// Merge base and overrides attribute name values (with properties substituted).
+			def mergedData = mergeDefinition(baseFile.name, agentWorkDir, mergedMap)
+
+			// Parse resource attributes mappings file and get them back, sorted, in a map.
+			def sortedResourceAttrsMap = parseResourceAttrs(getResourceAttributesFilePath())
+
+			// Map REST attributes to MQSC attributes and write the MQSC format commands to the mqsc
+			// resource definitions property variable.
+			mqscResourceDefinitions = generateMQSCDefinitions(mergedData, sortedResourceAttrsMap, mqscResourceDefinitions)
+
 			if (traceEnabled) {
-				println 'INFORMATION: Did not find tokens wrapped between \'@\' symbols'
+				println ' Data: mqscResourceDefinitions' + mqscResourceDefinitions
+				println 'Exit : generateMQSCFormDefinitions'
 			}
 		}
-
-		// Process any override name values.
-		mergedMap = processOverrideNames(mergedMap)
-
-		// Merge base and overrides attribute name values (with properties substituted).
-		def mergedData = mergeDefinition(baseFile.name, agentWorkDir, mergedMap)
-
-		// Parse resource attributes mappings file and get them back, sorted, in a map.
-		def sortedResourceAttrsMap = parseResourceAttrs(getResourceAttributesFilePath())
-
-		// Map REST attributes to MQSC attributes and write the MQSC format commands to the mqsc
-		// resource definitions property variable.
-		mqscResourceDefinitions = generateMQSCDefinitions(mergedData, sortedResourceAttrsMap, mqscResourceDefinitions)
-
-		if (traceEnabled) {
-			println ' Data: mqscResourceDefinitions' + mqscResourceDefinitions
-			println 'Exit : generateMQSCFormDefinitions'
-		}
-
+		
 		// Pass back the updated mqsc resource definitions property variable.
 		return mqscResourceDefinitions
 	}
@@ -137,32 +141,129 @@ class MQSCUtil {
 		def overrideResourceKey = ''
 		// Map for overrides.
 		def overridesMap = new HashMap()
+		// Flag to indicate whether specific overrides were found or not.
+		def specificOverridesFound
+		// Index of wildcard in generic target environment name.
+		def wildcardIndex
+		// Generic target environment name.
+		def genericTargetEnvironmentName = ''
 
-		// Build a map of override attributes.
+		// Loop for each resource in the overrides file and build a map of override attributes.
 		overrides.resource.each { typeOfResource->
+			// Loop for each type (i.e. queue or channel) of resource(s).
 			typeOfResource.value.each { resourceAttrs->
+				// Build overrideResourceKey.
+				overrideResourceKey = 'command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type
+
+				// Loop for each attribute of each resource (e.g. command, name, type (which is actually the resource subtype), deploymentTargets). 
 				resourceAttrs.each { resourceAttr->
+					// If the attribute key is deploymentTargets (each resource of a given type essentially has one or more deployment targets),
+					// we'll loop through each deploynment target. 
 					if (resourceAttr.key == 'deploymentTargets') {
+						specificOverridesFound = false
+						// Loop for each deployment target.
 						resourceAttr.value.each { dtAttrs->
-							// If the deployment target equals the target environment and override attributes are
-							// to be deployed, process the override attributes.
+							// If the deployment target equals the target environment name and override attributes are to be deployed,
+							// specific overrides have been found so we process the specific override attributes.
 							if (dtAttrs.targetEnvName == targetEnvironmentName && dtAttrs.deploy == true) {
+								specificOverridesFound = true
+								if (trace) {
+									println ' Data: Specific Overrides Found, targetEnvironmentName = ' + targetEnvironmentName
+									println ' Data: overrideResourceKey: ' + overrideResourceKey
+								}
+
+								// Loop for each group of attributes.	
 								dtAttrs.each { dtAttrsGrp->
 									if (trace) {
 										println ' Data: dtAttrsGrp: ' + dtAttrsGrp + ' dtAttrsGrp.value.getClass(): ' + dtAttrsGrp.value.getClass()
 									}
 
-									overrideResourceKey = 'command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type
-
-									if (!overrideResourcesMap.containsKey()) {
+									// Add the key to the overrideResourcesMap if it has not already been added. 
+									if (!overrideResourcesMap.containsKey(overrideResourceKey)) {
 										overrideResourcesMap.put(overrideResourceKey, true)
 									}
 
 									// All override attributes must be specified within their containing attribute groups so we
 									// expect them to be in a HashMap.
 									if (dtAttrsGrp.value in java.util.HashMap)  {
+										// Loop for each attribute in the attribute group.
 										dtAttrsGrp.value.each { dtAttr->
+											// Add the attribute override value to the overrides map.
 											overridesMap.put('command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type + '::attrGrp:' + dtAttrsGrp.key + '::attrName:' + dtAttr.key, 'attrValue:' + dtAttr.value)
+										}
+									}
+								}
+							} else {
+								// Specific overrides have not yet been found so we'll check if a generic target name has been defined.
+								// Generic target names are defined with a single wild card of * (note, this code does not test for the 
+								// existance of multiple wild cards. The single wild card is expected to be the last character in the generic
+								// target name).
+								//   
+								// Get the index of the * wildcard (if any) in the target environment name currently being processed. 
+								wildcardIndex = dtAttrs.targetEnvName.indexOf('*')
+								
+								// Check if the target environment name currently being processed is a generic target environment name.
+								// An index value of >=0 means we have found a wildcard.
+								if (wildcardIndex >= 0) {
+									// Ensure that the wildcard is the last character in the generic target environment name.
+									if (dtAttrs.targetEnvName.length() > (wildcardIndex + 1)) {
+										println '** ERROR: Generic target environment name is not valid. Generic target environment names must end with an * wildcard **\n'
+										throw new IllegalArgumentException('Generic target environment name is not valid')
+									}
+									
+									// If the wildcardIndex is 0, the (generic) target environment name consists of just the * wildcard.
+									if (wildcardIndex == 0) {
+										// Remember just the * wildcard.
+										genericTargetEnvironmentName = dtAttrs.targetEnvName
+									} else {
+										// The (generic) target environment name consists of more characters than just the * wildcard so, we check if the 
+										// additional characters are an exact subset of the targetEnvironmentName. If they are, and we do not find any suitable
+										// specific overrides, we can use the overrides defined for this (generic) target Environment name.
+										if (targetEnvironmentName.take(wildcardIndex) == dtAttrs.targetEnvName.take(wildcardIndex)) {
+											genericTargetEnvironmentName = dtAttrs.targetEnvName
+										}										
+									}									
+								}
+							}
+						}
+							
+						// If we did not find any specific overrides for the current ressource being processed, check if any suitable generic overrides 
+						// have been specified or not. If they have, we'll use them. Otherwise, there are no suitable overrides for the current resource
+						// being processed.
+						if (!specificOverridesFound) {
+							// Check if we have suitable generic overrides.
+							if (genericTargetEnvironmentName != '') {
+								// We have suitable generic overrides so let's locate and apply them.
+								// Loop for each deployment target.
+								resourceAttr.value.each { dtAttrs->
+									// If the deployment target equals the generic target environment name and override attributes are to be deployed,
+									// generic overrides have been found so we process the generic override attributes.
+									if (dtAttrs.targetEnvName == genericTargetEnvironmentName && dtAttrs.deploy == true) {
+										if (trace) {
+											println ' Data: Generic Overrides Found, genericTargetEnvironmentName = ' + genericTargetEnvironmentName
+											println ' Data: overrideResourceKey: ' + overrideResourceKey
+										}
+
+										// Loop for each group of attributes.
+										dtAttrs.each { dtAttrsGrp->
+											if (trace) {
+												println ' Data: dtAttrsGrp: ' + dtAttrsGrp + ' dtAttrsGrp.value.getClass(): ' + dtAttrsGrp.value.getClass()
+											}
+		
+											// Add the key to the overrideResourcesMap if it has not already been added.
+											if (!overrideResourcesMap.containsKey(overrideResourceKey)) {
+												overrideResourcesMap.put(overrideResourceKey, true)
+											}
+		
+											// All override attributes must be specified within their containing attribute groups so we
+											// expect them to be in a HashMap.
+											if (dtAttrsGrp.value in java.util.HashMap)  {
+												// Loop for each attribute in the attribute group.
+												dtAttrsGrp.value.each { dtAttr->
+													// Add the attribute override value to the overrides map.
+													overridesMap.put('command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type + '::attrGrp:' + dtAttrsGrp.key + '::attrName:' + dtAttr.key, 'attrValue:' + dtAttr.value)
+												}
+											}
 										}
 									}
 								}
@@ -176,6 +277,10 @@ class MQSCUtil {
 		// Create a list of the override maps so that we can pass them back. If the overrides file contains the empty set {},
 		// the overrideResourcesMap and the overridesMap will both be empty as there will be no resources to deploy.
 		// Note: A Tuple2 was not used here because the minimum version of groovy supported by UCD does not support Tuple2.
+		if (overridesMap.size() == 0) {
+			println '** INFORMATION: No resources to deploy in overrides file **'
+		}
+		
 		def overridesMaps = [overrideResourcesMap, overridesMap]
 
 		if (trace) {
@@ -220,11 +325,17 @@ class MQSCUtil {
 		def resourceKey = ''
 		// Resource attribute key.
 		def resourceAttrKey = ''
+		// Optional Attribute resource attribute key.
+		def optionalAttrResourceAttrKey = ''
+		// Key for adding attributes to the merged map. 
+		def mergedMapAttrKey = ''
 		// Attribute value.
 		def attrValue = ''
 		// Flag to indicate whether a resource attribute for a given resource has been written to the merged map or not.
 		def resourceAttributeWritten
-
+		// Optional Attributes Map.
+		def optionalAttrsMap = [noForce:'force', force:'noForce', noPurge:'purge', purge:'noPurge', noReplace:'replace', replace:'noReplace']
+				
 		// Merge the base and the override attributes and put the merged result to a merged map.
 		// Loop for each type of resource (currently queue or channel).
 		base.resource.each { typeOfResource->
@@ -233,12 +344,11 @@ class MQSCUtil {
 				// Build the resource key from the resource in the base file.
 				resourceKey = 'command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type
 
-				// If the overrides resources map contains the resource key we deploy the resource so we proceed to
-				// process it. Otherwise, we will skip the resouce.
+				// If the overrides resources map contains the resource key, we deploy the resource so we proceed to
+				// process it. Otherwise, we will skip the resource.
 				if (overrideResourcesMap.containsKey(resourceKey)) {
 					// Indicate that an attribute for the current resource has not yet been written to the merged map.
 					resourceAttributeWritten = false
-
 					// Loop for each resource attribute of the resource being processed.
 					resourceAttrs.each { resourceAttr->
 						if (trace) {
@@ -247,24 +357,80 @@ class MQSCUtil {
 
 						// Has a resource attribute group been specified in the base file ?
 						if (resourceAttr.value.getClass() in java.util.HashMap) {
+							if (resourceAttr.value.size() == 0) {
+								println '** ERROR: No attributes found in resource attribute group ' + resourceAttr.key + '**\n'
+								throw new IllegalArgumentException('No attributes found in resource attribute group')
+							}
+							
 							// Yes, we have a resource attribute group so we'll process each attribute in the group.
 							resourceAttr.value.each { resAttr->
-								// Create the resource attribute key for storing in to the merged map.
+								// Create the resource attribute key for storing into the merged map.
 								resourceAttrKey = 'command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type + '::attrGrp:' + resourceAttr.key + '::attrName:' + resAttr.key
 
-								// If the attribute being processed also has an override value process the override now.
+								if (trace) {
+									println ' Data: resourceAttrKey: ' + resourceAttrKey
+								}
+		
+								// If the attribute being processed from the base file also has an override value, process the override now.
+								// For single keyword optional attributes (e.g. force, noForce, purge, noPurge, replace, noReplace), the 
+								// keyword may have been specified in both the base and the overrides files. 
 								if (overridesMap.containsKey(resourceAttrKey)) {
+									mergedMapAttrKey = resourceAttrKey
+									
+									if (trace) {
+										println ' Data: mergedMapAttrKey 1: ' + mergedMapAttrKey
+									}
+									
 									attrValue = overridesMap.get(resourceAttrKey)
 									// Remove the processed entry from the overridesMap.
 									overridesMap.remove(resourceAttrKey)
 								}
+								// If the attribute being processed from the base file is an optional attribute, we check if the opposite
+								// value for the optional attribute (e.g. noForce instead of force) has been specified in the overrides file. 
+								else if (optionalAttrsMap.containsKey(resAttr.key)) {
+									// Create the resource attribute key for the opposite optional attribute value for storing into the merged map.
+									optionalAttrResourceAttrKey = 'command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type + '::attrGrp:' + resourceAttr.key + '::attrName:' + optionalAttrsMap.get(resAttr.key)
+									
+									if (trace) {
+										println ' Data: optionalAttrResourceAttrKey: ' + optionalAttrResourceAttrKey
+									}
+
+									// If the opposite value for an optional attribute is in the overrides file, we process the override value now.
+									if (overridesMap.containsKey(optionalAttrResourceAttrKey)) {
+										mergedMapAttrKey = optionalAttrResourceAttrKey
+									
+										if (trace) {
+											println ' Data: mergedMapAttrKey 2: ' + mergedMapAttrKey
+										}
+										
+										attrValue = overridesMap.get(optionalAttrResourceAttrKey)
+										// Remove the processed entry from the overridesMap.
+										overridesMap.remove(optionalAttrResourceAttrKey)
+									}
+									else {
+										//Otherwise, we'll just use the attribute value from the base file.
+										mergedMapAttrKey = resourceAttrKey
+										
+										if (trace) {
+											println ' Data: mergedMapAttrKey 3: ' + mergedMapAttrKey
+										}
+											
+										attrValue = 'attrValue:' + resAttr.value
+									}
+								}
 								else {
-									// Otherwise we'll just use the attribute value from the base file.
+									// Otherwise, we'll just use the attribute value from the base file.
+									mergedMapAttrKey = resourceAttrKey
+									
+									if (trace) {
+										println ' Data: mergedMapAttrKey 4: ' + mergedMapAttrKey
+									}
+									
 									attrValue = 'attrValue:' + resAttr.value
 								}
 
 								// Write attribute to the merged map.
-								mergedMap.put(resourceAttrKey, attrValue)
+								mergedMap.put(mergedMapAttrKey, attrValue)
 								// Indicate that an attribute for the resource has been written.
 								resourceAttributeWritten = true
 							}
@@ -277,10 +443,14 @@ class MQSCUtil {
 					// for this resource as all override values are expected to be defined within a resource group.
 					if (!resourceAttributeWritten) {
 						// Create the resource attribute key for storing in to the merged map.
-						resourceAttrKey = 'command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type
-
+						mergedMapAttrKey = 'command:' + resourceAttrs.command + '::name:' + resourceAttrs.name + '::typeOfResource:' + typeOfResource.key + '::type:' + resourceAttrs.type
+						
+						if (trace) {
+							println ' Data: mergedMapAttrKey 5: ' + mergedMapAttrKey
+						}
+						
 						// Write attribute to the merged map.
-						mergedMap.put(resourceAttrKey, "")
+						mergedMap.put(mergedMapAttrKey, "")
 					}
 				}
 			}
@@ -356,6 +526,7 @@ class MQSCUtil {
 		// If this is the case, we throw an exception now as there is no point in passing MQSC commands for
 		// resources that contain tokens since MQ will simply reject these.
 		if (mergedMapWithPropertiesSet.toString().contains('@')) {
+            println '\n'
 			throw new IllegalArgumentException('Unresolved tokens found wrapped between \'@\' characters. Ensure all Tokens and Values are defined in the properties file')
 		}
 
@@ -633,10 +804,6 @@ class MQSCUtil {
 	/**
 	 * Generate the MQSC form resource definitions.
 	 *
-	 * Note: It was decided to write the MQSC definitions to a file instead of a variable to
-	 *       ensure that any variable limits are not exceeded in the event that there are a
-	 *       large number of resource definitions.
-	 *
 	 * @param mergedData - file that contains the base and overrides merged data.
 	 * @param sortedResourceAttrsMap - map containing all the resource attributes sorted in alphabetical order.
 	 * @param mqscResourceDefinitions - property variable to which the MQSC form of the resource definitions are written.
@@ -683,8 +850,6 @@ class MQSCUtil {
 		def nextResSubType = ''
 		// Number of resources processed.
 		def numOfResources = 0
-		// Flag to indicate whether the REPLACE attribute is to be specified or not.
-		def specifyReplace = false
 		// Map to contain the attribute data type, name and/or value.
 		def mqscNameValueMap = [:]
 
@@ -735,18 +900,10 @@ class MQSCUtil {
 
 				// If this is not the first resource.
 				if (numOfResources > 1) {
-					// Add the REPLACE attribute to the previous resource definition if required.
-					if (previousCommand == 'DEFINE' && specifyReplace) {
-						mqscResourceDefinitions = writeAttribute(mqscResourceDefinitions, previousCommand.size()+1, [attrDataType: 'flag', attrValue: 'REPLACE'])
-					}
-
 					// End the last line of the previous resource and leave a blank comment line between the previous and the next
 					// resource definition in the mqsc resource definitions property variable (just to make it look pretty).
 					mqscResourceDefinitions += '\n*\n'
 				}
-
-				// Assume that the REPLACE attribute needs to be specified on the next resource definition.
-				specifyReplace = true
 
 				// Write the command (only DEFINE and DELETE supported at present) to the mqsc resource definitions property variable.
 				mqscResourceDefinitions += command
@@ -780,20 +937,33 @@ class MQSCUtil {
 						}
 						break
 					default:
-					 	println '** WARNING: generateMQSCDefinitions - Unexpected resource type found: ' + attrMap.typeOfResource + ' **'
+					 	println '** ERROR: generateMQSCDefinitions - Unexpected resource type found: ' + attrMap.typeOfResource + ' **\n'
+						throw new IllegalArgumentException('Unexpected resource type found')
 						break
 				}
 			}
 
-			// Only proceed to convert the REST form attribute to MQSC form if we have one.
+			// Only proceed to convert the REST form attribute to MQSC form if we have an attribute within an attribute group.
+			// Note: It is not an error if no attribute groups have been specified. Resources can be defined without any attribute 
+			// groups having been specified.
+			if (trace) {
+				println ' Data: attrMap.attrGrp ' + attrMap.attrGrp
+			}
+			
 			if (attrMap.attrGrp != null) {
+		
 				// Convert a REST form attribute to an MQSC form attribute.
 				// The returned map contains the attribute data type, name and/or value.
 				mqscNameValueMap = restToMQSCAttr(attrMap, sortedResourceAttrsMap)
-
-				// If the attribute being processed is the NOREPLACE attribute, there is no need to specify the REPLACE attribute.
-				if (mqscNameValueMap.attrValue == 'NOREPLACE') {
-					specifyReplace = false
+		
+				// KAINT (Keep Alive Interval) is declared as an integer attribute. It has a special value of -1 which 
+				// equates to AUTO in the MQSC. So, if we determine that the value specified in the JSON representation 
+				// is -1, we change it to AUTO here so that when we subsequently write the attribute to the output 
+				// variable, it will appear as KAINT(AUTO) which is acceptable by the MQSC. AMQPKA (AMQP Keep Alive 
+				// Interval is declared in the same way and needs to appear as AMQPKA(AUTO).
+				if ((mqscNameValueMap.attrName == 'KAINT') && (mqscNameValueMap.attrValue == '-1') ||
+					(mqscNameValueMap.attrName == 'AMQPKA') && (mqscNameValueMap.attrValue == '-1')) {
+					mqscNameValueMap.attrValue = 'AUTO'
 				}
 
 				// Note: This could be enhanced in the future to write the attributes sorted in alphabetical order,
@@ -802,12 +972,6 @@ class MQSCUtil {
 				// Write attribute to mqsc resource definitions property variable.
 				mqscResourceDefinitions = writeAttribute(mqscResourceDefinitions, command.size()+1, mqscNameValueMap)
 			}
-		}
-
-		// If the command for the last resource in the triplet of files was 'DEFINE', we'll add the REPLACE
-		// attribute to the last resource definition if required.
-		if (command == 'DEFINE' && specifyReplace) {
-			mqscResourceDefinitions = writeAttribute(mqscResourceDefinitions, command.size()+1, [attrDataType: 'flag', attrValue: 'REPLACE'])
 		}
 
 		if (trace) {
@@ -848,7 +1012,7 @@ class MQSCUtil {
 				parsedData = jsonSlurper.parse(fileReader)
 			}
 			catch (NullPointerException npe) {
-				println '** ERROR: NullPointerException encountered, file ' + fileName + ' may be empty.' + ' **'
+				println '** ERROR: NullPointerException encountered, file ' + fileName + ' may be empty.' + ' **\n'
 				throw npe
 			}
 		}
@@ -911,7 +1075,8 @@ class MQSCUtil {
 				}
 				break
 			default:
-				println '** WARNING: writeAttribute - Unexpected attribute data type found: ' + mqscNameValueMap.attrDataType + ' **'
+				println '** ERROR: writeAttribute - Unexpected attribute data type found: ' + mqscNameValueMap.attrDataType + ' **\n'
+				throw new IllegalArgumentException('Unexpected attribute data type found')
 				break
 		}
 
@@ -943,6 +1108,10 @@ class MQSCUtil {
 		// Key of REST attribute to be converted to MQSC. Used to locate the REST attribute in the
 		// sorted resource attributes map.
 		def findAttrKey = attrMap.typeOfResource + '::' + attrMap.attrGrp + '::' + attrMap.attrName
+
+		if (trace) {
+			println 'Data: findAttrKey: ' + findAttrKey
+		}
 
 		// Check if the resource attributes map contains details of the attribute whose name is to be
 		// converted from the REST form to the MQSC form.
@@ -977,7 +1146,8 @@ class MQSCUtil {
 						mqscNameValueMap.put(attrKeys[2], value)
 					}
 					else {
-						println '** WARNING: restToMQSCAttr - Unexpected attribute keyword value: ' + attrMap.attrValue + '**'
+						println '** ERROR: restToMQSCAttr - Unexpected attribute keyword value: ' + attrMap.attrValue + ' found **\n'
+						throw new IllegalArgumentException('Unexpected attribute keyword value found')
 					}
 					break
 				case 'flag':
@@ -994,16 +1164,19 @@ class MQSCUtil {
 						mqscNameValueMap.put(attrKeys[2], value)
 					}
 					else {
-						println '** WARNING: restToMQSCAttr - Unexpected attribute keyword value: ' + attrMap.attrValue + '**'
+						println '** ERROR: restToMQSCAttr - Unexpected attribute keyword value: ' + attrMap.attrValue + ' found **\n'
+						throw new IllegalArgumentException('Unexpected attribute keyword value found')
 					}
 					break
 				default:
-					println '** WARNING: restToMQSCAttr - Unexpected attribute data type found: ' + resourceAttrMap.attrDataType + ' **'
+					println '** ERROR: restToMQSCAttr - Unexpected attribute data type found: ' + resourceAttrMap.attrDataType + ' **\n'
+					throw new IllegalArgumentException('Unexpected attribute data type found')
 					break
 			}
 		}
 		else {
-			println '** WARNING: restToMQSCAttr - Unexpected attribute key: ' + findAttrKey + ' **'
+			println '** ERROR: restToMQSCAttr - Unexpected attribute group or keyword found in attribute key: ' + findAttrKey + ' **\n'
+			throw new IllegalArgumentException('Unexpected attribute group or keyword found')
 		}
 
 		if (trace) {

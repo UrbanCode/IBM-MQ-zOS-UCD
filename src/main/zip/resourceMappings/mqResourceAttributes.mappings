@@ -11,24 +11,36 @@
                     "attrMapping": "LIKE"
 				},
 				"noReplace": {
-					"attrDataType": "flag",
+					          "attrDataType": "flag",
                     "attrMapping": "NOREPLACE"
 				},
-				"force": {
+        "replace": {
+                    "attrDataType": "flag",
+                    "attrMapping": "REPLACE"
+        },
+        "noForce": {
+                    "attrDataType": "flag",
+                    "attrMapping": "NOFORCE"
+        },				
+        "force": {
                     "attrDataType": "flag",
                     "attrMapping": "FORCE"
 				},
 				"keepAuthorityRecords": {
                     "attrDataType": "keyword",
-					"attrMapping": "AUTHREC",
-					"attrValueMappings": {
-						"keepAuthorityRecords": "NO"
-					}
+					          "attrMapping": "AUTHREC",
+					          "attrValueMappings": {
+						            "keepAuthorityRecords": "NO"
+					          }
 				},
-				"purge": {
+				"noPurge": {
+                    "attrDataType": "flag",
+                    "attrMapping": "NOPURGE"
+				},
+        "purge": {
                     "attrDataType": "flag",
                     "attrMapping": "PURGE"
-				},
+        },
 				"queueSharingGroupDisposition": {
                     "attrDataType": "keyword",
                     "attrMapping": "QSGDISP",
@@ -434,6 +446,10 @@
                 "noReplace": {
                     "attrDataType": "flag",
                     "attrMapping": "NOREPLACE"
+                },
+                "replace": {
+                    "attrDataType": "flag",
+                    "attrMapping": "REPLACE"
                 },
                 "queueSharingGroupDisposition": {
                     "attrDataType": "keyword",
