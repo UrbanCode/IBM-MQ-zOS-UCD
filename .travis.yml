@@ -9,8 +9,7 @@ before_script:
 script:
     - gradle -PpluginVersion=${VERSION}
 jdk:
-    - oraclejdk8
-    - openjdk7
+    - openjdk9
 notifications:
   slack:
     secure: yLIMQ+WKVrZWAkPokrT/xN+imfgvLIbgPPcZ0Ytv8/CN0qIRYFf6HEBSnfndIRufNJr2OtPi+3f5i1Lbx21Q6N4d80htGI4E85lTBmCtbwEW6hbcWNu41C5zJocJ5YfPWB/B6Iyqi5GBpOm+o4zE8sYQ+6PY5pMlm6BuiPIGXqVh705oyIoey5gZONBY48ozkB3ymNStRJdp4/NBUN83TAC0WDEf8eRjQlxnvN3rRWn1wtguFHvJ6BnfKSSb7bozSYZ273OOakAcZPmv63Bwo1vnaGFy3PQKSDvgEPTtAGpPjyJMZpqN2jFTI1Vt2sdTMxlJjQVqE7x8P95z3ZNYVDyvXS7/Fatgy5eRATh1tG9Tm6MrMFFyfJSjgEGq6hl4ptak8ANa7XLYMrLSMstESiD3mkeVca489wMtDaqfj3OoxS1k/AhBZnjO2EJX/enwOuW5l0Ve5yFT8x93bAAp7r90qRppmsJBfHZ/bFFbFINey9Ao+uE/aTH2OvdEQPBfZOVhpDNFOFhRcNWUsuR2bQPwyMsxx4PrFLF+JpxcjM/5Ey9P7e/j3wbTF8OFSgdbuvmdCJzd4PBd47Bc4ZzSkxCdnenKUWg5uqn3Mj+c44NXFhxMT5raqmHCCEoKRvwM53MLh0bsyLdez3k82/oDFbemb5ZAluxr1qa/RN+RKU0=
