@@ -1,5 +1,6 @@
 /**
- * Copyright IBM Corporation 2016, 2018.
+ * (C) Copyright IBM Corporation 2016, 2021.
+ * (C) Copyright HCL Corporation 2018, 2021.
  * This is licensed under the following license.
  * The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
  * U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -186,7 +187,7 @@ class MQSCUtil {
 									}
 
 									// All override attributes must be specified within their containing attribute groups so we
-									// expect them to be in a HashMap.
+									// expect them to be in a HashMap or LazyMap depending on the version of Groovy in use with UCD
 									String dtAttrClass = dtAttrsGrp.value.getClass().toString()
 									if (dtAttrClass.contains(hashMapClass) || dtAttrClass.contains(lazyMapClass))  {
 										// Loop for each attribute in the attribute group.
