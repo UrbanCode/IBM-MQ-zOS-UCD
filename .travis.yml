@@ -25,4 +25,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    repo: IBM-UrbanCode/IBM-MQ-zOS-UCD
+    repo: UrbanCode/IBM-MQ-zOS-UCD
