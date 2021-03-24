@@ -1,5 +1,6 @@
 /**
- * © Copyright IBM Corporation 2016, 2018.
+ * (C) Copyright IBM Corporation 2016, 2021.
+ * (C) Copyright HCL Corporation 2018, 2021.
  * This is licensed under the following license.
  * The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
  * U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
@@ -18,6 +19,8 @@ class MQSCUtil {
 
 	// Trace flag.
 	def private trace
+	def final static hashMapClass = "java.util.HashMap"
+	def final static lazyMapClass = "groovy.json.internal.LazyMap"
 
 	// Character set encoding for the platform where the UCD agent is running.
 	def private charSetEncodingName
@@ -184,8 +187,9 @@ class MQSCUtil {
 									}
 
 									// All override attributes must be specified within their containing attribute groups so we
-									// expect them to be in a HashMap.
-									if (dtAttrsGrp.value in java.util.HashMap)  {
+									// expect them to be in a HashMap or LazyMap depending on the version of Groovy in use with UCD
+									String dtAttrClass = dtAttrsGrp.value.getClass().toString()
+									if (dtAttrClass.contains(hashMapClass) || dtAttrClass.contains(lazyMapClass))  {
 										// Loop for each attribute in the attribute group.
 										dtAttrsGrp.value.each { dtAttr->
 											// Add the attribute override value to the overrides map.
@@ -257,7 +261,8 @@ class MQSCUtil {
 		
 											// All override attributes must be specified within their containing attribute groups so we
 											// expect them to be in a HashMap.
-											if (dtAttrsGrp.value in java.util.HashMap)  {
+											String dtAttrClass = dtAttrsGrp.value.getClass().toString()
+											if (dtAttrClass.contains(hashMapClass) || dtAttrClass.contains(lazyMapClass))  {
 												// Loop for each attribute in the attribute group.
 												dtAttrsGrp.value.each { dtAttr->
 													// Add the attribute override value to the overrides map.
@@ -356,7 +361,8 @@ class MQSCUtil {
 						}
 
 						// Has a resource attribute group been specified in the base file ?
-						if (resourceAttr.value.getClass() in java.util.HashMap) {
+						String resourceAttrClass = resourceAttr.value.getClass().toString()
+						if (resourceAttrClass.contains(hashMapClass) || resourceAttrClass.contains(lazyMapClass)) {
 							if (resourceAttr.value.size() == 0) {
 								println '** ERROR: No attributes found in resource attribute group ' + resourceAttr.key + '**\n'
 								throw new IllegalArgumentException('No attributes found in resource attribute group')
@@ -769,7 +775,8 @@ class MQSCUtil {
 					if (trace) {
 						println ' Data: resourceAttrGrp.value' + resourceAttrGrp.value + ' resourceAttrGrp.value.getClass(): ' + resourceAttrGrp.value.getClass()
 					}
-					if (resourceAttrGrp.value.getClass() in java.util.HashMap || resourceAttrGrp.value.getClass() in java.lang.String) {
+					String resourceAttrGrpClass = resourceAttrGrp.value.getClass().toString()
+					if (resourceAttrGrpClass.contains(hashMapClass) || (resourceAttrGrp.value.getClass() in java.lang.String) || resourceAttrGrpClass.contains(lazyMapClass)) {
 						// Loop for each attribute within a group of resource attributes.
 						resourceAttrGrp.value.each { resourceAttr->
 							//Key consists of the resource type, the resource group name and the attribute name.
