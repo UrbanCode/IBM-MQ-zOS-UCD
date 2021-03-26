@@ -140,7 +140,9 @@
         Setting the keepAliveInterval to -1 now correctly builds MQSC with KAINT(AUTO) or AMQPKA(AUTO) depending on the type of channel being defined.
         The white paper has been updated to document default (generic) overrides.
         Additional trace has also been added where required, and some comments in the code have been enhanced to aid future maintenance.
-        Added support for Groovy 2.4 version 
+    </release-note>
+    <release-note plugin-version="6">
+        Added support for Groovy 2.4 version
     </release-note>
   </release-notes>
 </pluginInfo>

@@ -7,7 +7,7 @@
 -->
 <plugin xmlns="http://www.urbancode.com/PluginXMLSchema_v1" xmlns:server="http://www.urbancode.com/PluginServerXMLSchema_v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <header>
-    <identifier id="com.ibm.ucd.plugin.mqzos" name="MQ for zOS" version="5"/>
+    <identifier id="com.ibm.ucd.plugin.mqzos" name="MQ for zOS" version="6"/>
     <description> The MQ for zOS plug-in includes deployment activities for MQ for zOS
     </description>
     <tag>Middleware/Messaging/MQ for zOS</tag>
