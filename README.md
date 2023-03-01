@@ -29,6 +29,12 @@ This plug-in requires version 6.2.2 (or later) of IBM UrbanCode Deploy.
 	your own changes to the plugin.
 
 ### History
+Version 7
+- Added support for groovy 3.0.10 version
+
+Version 6
+- Added support for groovy 2.4 version
+
 Version 5
 - If there is no base file, an error is now raised. An information message is also now issued if there are no resources to deploy in the overrides file.
 - Single keyword (i.e. force/noForce, replace/noReplace, purge/noPurge) overrides are now supported. Other single keywords, like trigger/noTrigger, were previously already supported by the plugin.
