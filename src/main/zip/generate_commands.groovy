@@ -28,7 +28,7 @@ import com.urbancode.air.plugin.mqzos.MQSCUtil
 try {
 	// Declare local variables.
 	def apTool = ''
-	final def workDir
+	def workDir
 	def props = ''
 	def fileSubFolders = ''
 	def baseFileNameFilter = ''
