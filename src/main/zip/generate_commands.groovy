@@ -5,7 +5,7 @@
  * U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
  */
 
-import com.urbancode.air.AirPluginTool
+import com.urbancode.air.plugin.helpers.AirPluginTool
 import com.urbancode.air.plugin.mqzos.MQSCUtil
 
 // generate_commands.groovy is the first method (groovy script) that is invoked when
