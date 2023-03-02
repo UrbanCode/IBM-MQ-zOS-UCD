@@ -144,5 +144,8 @@
     <release-note plugin-version="6">
         Added support for Groovy 2.4 version
     </release-note>
+    <release-note plugin-version="7">
+        Added support for Groovy 3.0.10 version
+    </release-note>
   </release-notes>
 </pluginInfo>

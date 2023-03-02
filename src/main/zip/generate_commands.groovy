@@ -1,11 +1,11 @@
 /**
- * © Copyright IBM Corporation 2016, 2018.
+ * © Copyright IBM Corporation 2016, 2023.
  * This is licensed under the following license.
  * The Eclipse Public 1.0 License (http://www.eclipse.org/legal/epl-v10.html)
  * U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
  */
 
-import com.urbancode.air.AirPluginTool
+import com.urbancode.air.plugin.helpers.AirPluginTool
 import com.urbancode.air.plugin.mqzos.MQSCUtil
 
 // generate_commands.groovy is the first method (groovy script) that is invoked when
@@ -28,7 +28,7 @@ import com.urbancode.air.plugin.mqzos.MQSCUtil
 try {
 	// Declare local variables.
 	def apTool = ''
-	final def workDir
+	def workDir
 	def props = ''
 	def fileSubFolders = ''
 	def baseFileNameFilter = ''

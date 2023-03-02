@@ -17,5 +17,7 @@
   </migrate>
   <migrate to-version="6">
   </migrate>
+  <migrate to-version="7">
+  </migrate>
 
 </plugin-upgrade>
