@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  build-gradle-project:
 
     runs-on: ubuntu-latest
 
@@ -28,7 +28,7 @@ jobs:
       uses: gradle/gradle-build-action@v2
         
     - name: Build with Gradle
-      run: ./gradlew build
+      run: gradle build
       
     - name: Run tests
-      run: ./gradlew test
+      run: gradle test
