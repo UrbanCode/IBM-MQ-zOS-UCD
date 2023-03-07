@@ -166,6 +166,14 @@ task gatherI18n(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task writePluginVersionToFile(){
+    File pluginXml = new File('./src/main/zip/plugin.xml')
+    def plugin = new XmlParser().parse(pluginXml)
+    def version = plugin.header.identifier.@version
+    File file = new File(".output.txt")
+    file.write version[0]
+}
+
 task cleanAll(dependsOn: ['clean', 'cleanCopyDeps', 'cleanDistPlugin', 'cleanGatherI18n'])
 
 String stripVersion(String fileNameWithVersion) {

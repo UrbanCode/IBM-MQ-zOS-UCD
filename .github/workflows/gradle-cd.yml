@@ -1,0 +1,51 @@
+name: Gradle CD
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  create-release:
+
+    permissions: write-all
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt-openj9'
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 6.5
+
+      - name: Get short commit SHA
+        id: getShortHash
+        run: echo "shortHash=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_OUTPUT
+
+      - name: Get Version
+        run: gradle writePluginVersionToFile
+
+      - name: Get Plugin Version
+        id: getPluginVersion
+        run: echo "pluginVersion=$(cat .output.txt).${{ steps.getShortHash.outputs.shortHash }}" >> $GITHUB_OUTPUT
+
+      - name: Echo Plugin Version
+        run: echo "${{ steps.getPluginVersion.outputs.pluginVersion }}"
+
+      - name: Create dist
+        run: gradle "-PpluginVersion=${{ steps.getPluginVersion.outputs.pluginVersion }}" distPlugin
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          name: "${{ github.event.repository.name }} v${{ steps.getPluginVersion.outputs.pluginVersion }}"
+          artifacts: "build/distributions/*.zip"
