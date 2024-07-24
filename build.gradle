@@ -58,7 +58,7 @@ sourceSets {
 }
 
 compileJava {
-    dependsOn 'extractGPU', 'copyi18n'
+    dependsOn 'extractGPU', 'copyi18n', 'copyDeps'
 }
 compileGroovy {
     include "i18n-scraper.groovy"
