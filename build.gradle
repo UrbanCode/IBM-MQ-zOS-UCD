@@ -44,7 +44,6 @@ apply plugin: 'groovy'
 defaultTasks 'distPlugin'
 
 def buildLocaleDir = 'build/locale'
-def buildUtilDir   = 'build/util'
 
 configurations {
     // Remove the groovy-all jar from runtime dependencies
@@ -60,13 +59,13 @@ repositories {
 
 dependencies {
     // groovy-plugin-utils pulls down groovy-all as a transitive dependency for the 'compile' configuration
-    compile 'com.ibm.urbancode.plugins:groovy-plugin-utils:+'
-    compile 'com.ibm.urbancode.util:i18n-scraper:+'
+    implementation 'com.ibm.urbancode.plugins:groovy-plugin-utils:+'
+    implementation 'com.ibm.urbancode.util:i18n-scraper:+'
 
     // This compiles the i18n-scraper script
-    compile localGroovy()
-    testCompile 'junit:junit:4.11'
-    testCompile 'org.hamcrest:hamcrest-core:1.3'
+    implementation localGroovy()
+    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.hamcrest:hamcrest-core:1.3'
 }
 
 sourceSets {
@@ -94,10 +93,10 @@ compileGroovy {
     include "i18n-scraper.groovy"
 }
 
-task copyDeps(type: Copy) {
+tasks.register('copyDeps', Copy) {
     into 'lib'
     copy {
-        from configurations.runtime
+        from configurations.runtimeClasspath
         include { target ->
             return target.file.path.contains("com.ibm.urbancode")
         }
@@ -107,7 +106,7 @@ task copyDeps(type: Copy) {
         }
     }
     copy {
-        from configurations.runtime
+        from configurations.runtimeClasspath
         exclude { target ->
             return target.file.path.contains("com.ibm.urbancode")
         }
@@ -115,7 +114,7 @@ task copyDeps(type: Copy) {
     }
 }
 
-task extractGPU(type: Copy) {
+tasks.register('extractGPU', Copy) {
     def zipFile = file('lib/groovy-plugin-utils.jar')
     def outputDir = file("${buildDir}/util")
 
@@ -123,7 +122,7 @@ task extractGPU(type: Copy) {
     into outputDir
 }
 
-task copyi18n(type: Copy) {
+tasks.register('copyi18n', Copy) {
     def i18nFile = file('lib/i18n-scraper.groovy')
     def outputDir = file("${buildDir}/util")
 
@@ -131,7 +130,8 @@ task copyi18n(type: Copy) {
     into outputDir
 }
 
-task distPlugin(type: Zip, dependsOn: ['compileGroovy', 'gatherI18n']) {
+tasks.register('distPlugin', Zip) {
+    dependsOn('compileGroovy', 'gatherI18n')
     from(sourceSets.zip.groovy.srcDirs) {
         filter(ReplaceTokens, tokens: [RELEASE_VERSION: pluginVersion])
     }
@@ -151,13 +151,13 @@ task distPlugin(type: Zip, dependsOn: ['compileGroovy', 'gatherI18n']) {
         exclude 'META-INF', 'i18n-scraper.groovy'
     }
     if (pluginVersion) {
-        archiveName = "${pluginName}-v${pluginVersion}.zip"
+        archiveFileName = "${pluginName}-v${pluginVersion}.zip"
     } else {
-        archiveName = "${pluginName}-dev.zip"
+        archiveFileName = "${pluginName}-dev.zip"
     }
 }
 
-task gatherI18n(type: JavaExec) {
+tasks.register('gatherI18n', JavaExec) {
     delete buildLocaleDir
     mkdir buildLocaleDir
 
@@ -166,18 +166,20 @@ task gatherI18n(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
-task writePluginVersionToFile(){
+tasks.register('writePluginVersionToFile') {
     File pluginXml = new File('./src/main/zip/plugin.xml')
     def plugin = new XmlParser().parse(pluginXml)
-    def version = plugin.header.identifier.@version
+    String[] version = plugin.header.identifier.@version
     File file = new File(".output.txt")
     file.write version[0]
 }
 
-task cleanAll(dependsOn: ['clean', 'cleanCopyDeps', 'cleanDistPlugin', 'cleanGatherI18n'])
+tasks.register('cleanAll') {
+    dependsOn('clean', 'cleanCopyDeps', 'cleanDistPlugin', 'cleanGatherI18n')
+}
 
-String stripVersion(String fileNameWithVersion) {
+static String stripVersion(fileNameWithVersion) {
     String ext = fileNameWithVersion.substring(fileNameWithVersion.lastIndexOf("."),fileNameWithVersion.length())
-    int end = fileNameWithVersion.lastIndexOf("-"); //assumes that: name-version.ext. Will not work with name-version-SNAPSHOT.ext
+    int end = fileNameWithVersion.lastIndexOf("-") //assumes that: name-version.ext. Will not work with name-version-SNAPSHOT.ext
     return fileNameWithVersion.substring(0, end) + ext
 }
