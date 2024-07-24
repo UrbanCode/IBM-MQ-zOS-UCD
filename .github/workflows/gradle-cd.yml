@@ -22,17 +22,15 @@ jobs:
           java-version: '8'
           distribution: 'adopt-openj9'
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 6.5
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
 
       - name: Get short commit SHA
         id: getShortHash
         run: echo "shortHash=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_OUTPUT
 
       - name: Get Version
-        run: gradle writePluginVersionToFile
+        run: ./gradlew writePluginVersionToFile
 
       - name: Get Plugin Version
         id: getPluginVersion
@@ -42,7 +40,7 @@ jobs:
         run: echo "${{ steps.getPluginVersion.outputs.pluginVersion }}"
 
       - name: Create dist
-        run: gradle "-PpluginVersion=${{ steps.getPluginVersion.outputs.pluginVersion }}" distPlugin
+        run: ./gradlew "-PpluginVersion=${{ steps.getPluginVersion.outputs.pluginVersion }}" distPlugin
 
       - name: Create Release
         uses: ncipollo/release-action@v1.12.0
