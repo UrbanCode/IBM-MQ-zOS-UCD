@@ -2,8 +2,7 @@ name: Gradle CD
 
 on:
   push:
-    tags:
-      - '*'
+    branches: [ "master" ]
 
 jobs:
 
@@ -22,28 +21,45 @@ jobs:
           java-version: '8'
           distribution: 'adopt-openj9'
 
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Fetch all tags
+        run: git fetch --tags
+
+      - name: Determine next tag version
+        id: getNextTag
+        run: |
+          # Get version from plugin.xml
+          pluginXmlVersion=$(grep -oP '<identifier .* version="\K[^"]+' src/main/zip/plugin.xml)
+          echo "pluginXmlVersion is $pluginXmlVersion"
+
+          # Get the latest tag
+          latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
+          echo "latestTag is $latestTag"
+
+          # Determine next tag
+          if awk "BEGIN {exit !( $latestTag < $pluginXmlVersion )}"; then
+            nextTag="$pluginXmlVersion.0"
+          else
+            nextTag=$(awk "BEGIN {print $latestTag + 0.1}")
+          fi
+
+          echo "nextTag is $nextTag"
+          echo "value=$nextTag" >> $GITHUB_OUTPUT
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Get short commit SHA
-        id: getShortHash
-        run: echo "shortHash=$(git rev-parse --short $GITHUB_SHA)" >> $GITHUB_OUTPUT
-
-      - name: Get Version
-        run: ./gradlew writePluginVersionToFile
-
-      - name: Get Plugin Version
-        id: getPluginVersion
-        run: echo "pluginVersion=$(cat .output.txt).${{ steps.getShortHash.outputs.shortHash }}" >> $GITHUB_OUTPUT
-
-      - name: Echo Plugin Version
-        run: echo "${{ steps.getPluginVersion.outputs.pluginVersion }}"
-
       - name: Create dist
-        run: ./gradlew "-PpluginVersion=${{ steps.getPluginVersion.outputs.pluginVersion }}" distPlugin
+        run: ./gradlew "-PpluginVersion=${{ steps.getNextTag.outputs.value }}" distPlugin
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1.12.0
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: "${{ github.event.repository.name }} v${{ steps.getPluginVersion.outputs.pluginVersion }}"
-          artifacts: "build/distributions/*.zip"
+          tag_name: ${{ steps.getNextTag.outputs.value }}
+          files: "build/distributions/*.zip"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

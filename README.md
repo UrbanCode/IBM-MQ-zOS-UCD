@@ -24,7 +24,7 @@ This plug-in requires version 6.2.2 (or later) of IBM UrbanCode Deploy.
 
 * Use wrapper script `gradlew/gradle.bat` to build the project locally.
 * To create distributable with a plugin release version pass property `pluginVersion` while running wrapper script like below
-> ./gradlew "-PpluginVersion=7.24072024"
+> ./gradlew "-PpluginVersion=6.9"
 
 ### Installation
 	The packaged zip is located in the 'Releases' tab. No special steps are required for installation.

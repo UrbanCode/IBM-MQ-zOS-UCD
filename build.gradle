@@ -122,7 +122,7 @@ tasks.register('distPlugin', Zip) {
         exclude 'META-INF', 'i18n-scraper.groovy'
     }
 
-    archiveFileName = pluginVersion ? "${pluginName}-v${pluginVersion}.zip" : "${pluginName}-dev.zip"
+    archiveFileName = "${pluginName}-${pluginVersion}.zip"
 }
 
 tasks.register('gatherI18n', JavaExec) {
@@ -132,14 +132,6 @@ tasks.register('gatherI18n', JavaExec) {
     main = 'i18n-scraper'
     args 'build/locale/en.properties'
     classpath = sourceSets.main.runtimeClasspath
-}
-
-tasks.register('writePluginVersionToFile') {
-    File pluginXml = new File('./src/main/zip/plugin.xml')
-    def plugin = new XmlParser().parse(pluginXml)
-    String[] version = plugin.header.identifier.@version
-    File file = new File(".output.txt")
-    file.write version[0]
 }
 
 tasks.register('cleanAll') {
