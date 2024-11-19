@@ -8,11 +8,18 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 String pluginName = "IBM-MQ-zOS-UCD"
-String pluginVersion = project.hasProperty('pluginVersion') ? project.getProperty('pluginVersion') : 'dev'
+
+String pluginVersion
+if (project.hasProperty('pluginVersion')) {
+    pluginVersion = project.getProperty('pluginVersion')
+} else {
+    def pluginNode = new XmlParser().parse(new File('src/main/zip/plugin.xml'))
+    pluginVersion = "${pluginNode.header.identifier.@version[0]}.dev"
+}
 
 apply plugin: 'groovy'
 
-defaultTasks 'distPlugin'
+defaultTasks("dist")
 
 def buildLocaleDir = 'build/locale'
 
@@ -101,7 +108,7 @@ tasks.register('copyi18n', Copy) {
     into outputDir
 }
 
-tasks.register('distPlugin', Zip) {
+tasks.register('dist', Zip) {
     dependsOn('compileGroovy', 'gatherI18n')
     from(sourceSets.zip.groovy.srcDirs) {
         filter(ReplaceTokens, tokens: [RELEASE_VERSION: pluginVersion])
