@@ -6,6 +6,7 @@
  */
 
 import org.apache.tools.ant.filters.ReplaceTokens
+import groovy.xml.XmlParser
 
 String pluginName = "IBM-MQ-zOS-UCD"
 
@@ -136,13 +137,22 @@ tasks.register('gatherI18n', JavaExec) {
     delete buildLocaleDir
     mkdir buildLocaleDir
 
-    main = 'i18n-scraper'
+	mainClass.set('i18n-scraper')
     args 'build/locale/en.properties'
     classpath = sourceSets.main.runtimeClasspath
 }
 
 tasks.register('cleanAll') {
     dependsOn('clean', 'cleanCopyDeps', 'cleanDistPlugin', 'cleanGatherI18n')
+}
+
+//extractGPU and copyi18n uses same lib so to ensure both waits for copyDeps
+tasks.named("extractGPU") {
+    dependsOn("copyDeps")
+}
+
+tasks.named("copyi18n") {
+    dependsOn("copyDeps")
 }
 
 static String stripVersion(fileNameWithVersion) {
