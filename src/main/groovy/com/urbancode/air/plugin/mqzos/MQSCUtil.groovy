@@ -19,8 +19,8 @@ class MQSCUtil {
 
 	// Trace flag.
 	def private trace
-	def final static hashMapClass = "java.util.HashMap"
-	def final static lazyMapClass = "groovy.json.internal.LazyMap"
+	def static hashMapClass = "java.util.HashMap"
+	def static lazyMapClass = "groovy.json.internal.LazyMap"
 
 	// Character set encoding for the platform where the UCD agent is running.
 	def private charSetEncodingName
@@ -60,7 +60,7 @@ class MQSCUtil {
 		charSetEncodingName = System.getProperty('file.encoding')
 
 		// Get the UCD agent's work directory.
-		final def agentWorkDir = new File('.').canonicalFile
+		def agentWorkDir = new File('.').canonicalFile
 
 		// Parse the base JSON format file and store the data into a base map.
 		def baseMap = parseFile(baseFile)
@@ -724,7 +724,7 @@ class MQSCUtil {
 		}
 
 		// Get the home directory for the plugin
-		final def pluginHome = System.getenv('PLUGIN_HOME')
+		def pluginHome = System.getenv('PLUGIN_HOME')
 
 		def resAttrsFilePath = pluginHome + File.separator + 'resourceMappings' + File.separator + 'mqResourceAttributes.mappings'
 
