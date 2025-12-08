@@ -5,7 +5,8 @@
  * U.S. Government Users Restricted Rights:  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
  */
 
-import com.urbancode.air.plugin.helpers.AirPluginTool
+
+import com.urbancode.air.plugin.helpers.NewAirPluginTool
 import com.urbancode.air.plugin.mqzos.MQSCUtil
 
 // generate_commands.groovy is the first method (groovy script) that is invoked when
@@ -44,7 +45,7 @@ try {
 		workDir = new File('.').canonicalFile
 
 		// Use the UCD air plug=in tool for reading or writing the step's input or output variables, respectively.
-		apTool = new AirPluginTool(this.args[0], this.args[1])
+		apTool = new NewAirPluginTool(this.args[0], this.args[1])
 		props = apTool.getStepProperties()
 
 		// Get all properties for the plug-in. Trim any leading and trailing spaces.
@@ -102,7 +103,7 @@ try {
 	def propertiesFileNameAndType = ''
 
 	// Get the UCD agent's work directory.
-	final def agentWorkDir = new File('.').canonicalFile
+	def agentWorkDir = new File('.').canonicalFile
 
 	// MQSC resource definitions property variable.
 	def mqscResourceDefinitions = ''
